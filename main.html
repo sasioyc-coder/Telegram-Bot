@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MINI MONEY APP</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { background: #121212; color: #fff; font-family: Arial; margin: 0; padding: 0; }
+   .header { background: #1f1f1f; padding: 20px; text-align: center; border-bottom: 2px solid #FFD700; }
+   .card { background: #1e1e1e; margin: 15px; padding: 20px; border-radius: 15px; border: 1px solid #333; }
+   .balance { font-size: 32px; color: #FFD700; font-weight: bold; }
+   .task-btn { background: #FFD700; color: #000; border: none; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+   .task-btn:disabled { background: #555; color: #999; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>💰 MINI MONEY</h2>
+    <div class="balance" id="balance">$0.00</div>
+    <p>Your Earnings</p>
+  </div>
+
+  <div class="card">
+    <h3>🔥 Daily Task</h3>
+    <p>Watch Ad and Earn $0.10</p>
+    <button class="task-btn" id="task1" onclick="completeTask(1)">WATCH & EARN</button>
+  </div>
+
+  <div class="card">
+    <h3>⭐ Premium Task</h3>
+    <p>Complete Offer and Earn $0.50</p>
+    <button class="task-btn" id="task2" onclick="completeTask(2)">START TASK</button>
+  </div>
+
+  <div class="card">
+    <h3>💸 Withdraw</h3>
+    <p>Minimum: $5.00</p>
+    <button class="task-btn" onclick="withdraw()">WITHDRAW NOW</button>
+  </div>
+
+<script>
+  let currentBalance = 0;
+  const balanceEl = document.getElementById('balance');
+
+  function completeTask(type) {
+    let reward = type === 1? 0.10 : 0.50;
+    currentBalance += reward;
+    balanceEl.innerText = `$${currentBalance.toFixed(2)}`;
+
+    const btn = document.getElementById(`task${type}`);
+    btn.innerText = "COMPLETED ✓";
+    btn.disabled = true;
+
+    setTimeout(() => {
+      btn.innerText = type === 1? "WATCH & EARN" : "START TASK";
+      btn.disabled = false;
+    }, 5000);
+
+    // Send to bot if needed
+    if(window.Telegram.WebApp) {
+      Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+    }
+  }
+
+  function withdraw() {
+    if(currentBalance < 5) {
+      alert(`Minimum withdrawal is $5.00. Your balance: $${currentBalance.toFixed(2)}`);
+    } else {
+      alert('Withdrawal request sent! Admin will contact you within 24 hours.');
+    }
+  }
+
+  if(window.Telegram.WebApp) {
+    Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
+  }
+</script>
+</body>
+</html>
